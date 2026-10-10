@@ -50,8 +50,9 @@ Before deploying auth/client/scope changes, verify authenticated live reads,
 refresh and reauthorization. Scope changes require new consent; never delete a
 user's cache automatically to force it.
 
-A branch push opens CI but does not deploy: deployment is gated on `main` and
-`DEPLOY_ENABLED`. Do not publish, merge or deploy as part of a code-only update.
+A branch push opens CI but does not deploy: deployment is gated on `main`,
+`DEPLOY_ENABLED`, and now a manual approval on the `production` GitHub
+Environment. Do not publish, merge or deploy as part of a code-only update.
 
 Release checks pass 89 workerd tests and seven Node auth tests, with a 688.58 KiB
 gzip bundle. Tests use the shared server factory and reject dynamic code generation
@@ -68,6 +69,26 @@ including confirmed removal and cover upload. Temporary playlists were unfollowe
 and original library membership restored. Mismatched OAuth redirects return 400
 without a redirect. Native 0.7.0 also passes all 17 read tools.
 Playback and queue writes remain intentionally untested without explicit permission.
+
+## CI/CD on the fork (2026-10-09)
+
+Fork points at its own Cloudflare account; `ci.yml`, `.mcp.json` and the
+`OAUTH_KV` namespace ID in `wrangler.jsonc` no longer reference the upstream
+account. `main` requires `check`/`security`/`size`, an up-to-date branch, and
+blocks direct pushes even for admins. `deploy` additionally pauses on the
+`production` GitHub Environment for manual approval before `wrangler deploy`
+runs. `CLOUDFLARE_API_TOKEN` expires 2027-10-09; a calendar reminder covers
+rotation.
+
+`pnpm audit --prod --audit-level high` found four CVEs from stale dependencies;
+three were fixed by bumping `@modelcontextprotocol/sdk`, `hono`,
+`@cloudflare/workers-oauth-provider` and `agents` within their existing ranges.
+The fourth (`@modelcontextprotocol/client`, GHSA-6qxp-vccf-f47h) is pinned by
+`agents` as an exact peer dependency at the vulnerable `2.0.0`; no released
+`agents` version permits the patched `2.2.0+`. It's ignored in
+`pnpm-workspace.yaml`'s `auditConfig` so CI isn't blocked on something nobody
+can currently fix, but the GitHub Dependabot alert is left open deliberately
+as the tracking surface. Revisit when `agents` bumps that peer pin.
 
 ## Remaining decisions
 
