@@ -13,3 +13,8 @@ worker-configuration.d.ts
 # Local symlink to the Python sibling repo
 spotify-mcp
 coverage/
+
+# Local scratch files (screenshots, notes)
+Screenshot*.png
+*-screenshot.png
+spotify-app.txt

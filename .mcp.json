@@ -1,8 +1,8 @@
 {
 	"mcpServers": {
-		"spotify": {
+		"spotify-cloudflare": {
 			"type": "http",
-			"url": "https://spotify-mcp-cloudflare.jamie-7e9.workers.dev/mcp"
+			"url": "https://spotify-mcp-cloudflare.rotemjac.workers.dev/mcp"
 		}
 	}
 }
