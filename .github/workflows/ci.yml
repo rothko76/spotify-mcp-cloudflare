@@ -58,6 +58,9 @@ jobs:
     # Skips (green, not red) when the Cloudflare token secret isn't configured.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
+    # Pauses here for manual approval (configured as a required reviewer on
+    # the "production" environment) before the deploy step below runs.
+    environment: production
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
