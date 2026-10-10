@@ -7,9 +7,17 @@ allowBuilds:
 # GHSA-frvp-7c67-39w9: @hono/node-server path traversal (Windows, serve-static).
 # Transitive via @modelcontextprotocol/sdk's Node adapter — never executed on
 # Workers. SDK pins <2; drop this ignore when it moves to node-server >=2.0.5.
+#
+# GHSA-6qxp-vccf-f47h: MCP TypeScript SDK OAuth client could send credentials
+# to an auth server chosen by the MCP server. Reached via agents, which pins
+# @modelcontextprotocol/client as an exact (non-range) peer dependency at the
+# vulnerable 2.0.0 - no released agents version currently permits the patched
+# 2.2.0+. Left open on GitHub's Dependabot alerts as the tracking surface;
+# drop this ignore once agents bumps that peer pin.
 auditConfig:
   ignoreGhsas:
     - GHSA-frvp-7c67-39w9
+    - GHSA-6qxp-vccf-f47h
 
 # agents@0.28.0 fixes the source-map-js DoS CVE (GHSA-68fv-2mgg-jv7q) pulled in
 # via its vite/postcss chain at 0.23.0. Exclude it from the release-age gate so
