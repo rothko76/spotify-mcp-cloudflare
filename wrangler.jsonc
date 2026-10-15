@@ -46,5 +46,38 @@
 	},
 	"dev": {
 		"port": 8788
+	},
+	// Deploys as spotify-mcp-cloudflare-staging (Wrangler suffixes the Worker
+	// name with the environment). One shared slot: every open PR's deploy
+	// overwrites the last, which is fine since only one PR is open at a time.
+	// Secrets (SPOTIFY_CLIENT_ID/SECRET, COOKIE_ENCRYPTION_KEY) are set per
+	// environment with `pnpm wrangler secret put <NAME> --env staging`.
+	"env": {
+		"staging": {
+			// durable_objects and migrations aren't inherited from the top level
+			// by named environments; redeclared here to match production.
+			"migrations": [
+				{
+					"tag": "v1",
+					"new_sqlite_classes": [
+						"SpotifyMCP"
+					]
+				}
+			],
+			"durable_objects": {
+				"bindings": [
+					{
+						"name": "MCP_OBJECT",
+						"class_name": "SpotifyMCP"
+					}
+				]
+			},
+			"kv_namespaces": [
+				{
+					"binding": "OAUTH_KV",
+					"id": "918c2a5e0a484973889d147fc9fe5f95"
+				}
+			]
+		}
 	}
 }
