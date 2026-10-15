@@ -3,6 +3,10 @@
 		"spotify-cloudflare": {
 			"type": "http",
 			"url": "https://spotify-mcp-cloudflare.rotemjac.workers.dev/mcp"
+		},
+		"spotify-cloudflare-staging": {
+			"type": "http",
+			"url": "https://spotify-mcp-cloudflare-staging.rotemjac.workers.dev/mcp"
 		}
 	}
 }

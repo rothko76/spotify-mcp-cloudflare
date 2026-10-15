@@ -53,6 +53,25 @@ jobs:
       - name: Bundle size budget
         run: pnpm check:size
 
+  deploy-staging:
+    needs: [check, security, size]
+    # Skips (green, not red) when the Cloudflare token secret isn't configured.
+    if: github.event_name == 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4ca884d36bb06d278ab040e40eba3b05
+          environment: staging
+
   deploy:
     needs: [check, security, size]
     # Skips (green, not red) when the Cloudflare token secret isn't configured.
@@ -73,3 +92,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 4ca884d36bb06d278ab040e40eba3b05
+          environment: ""
