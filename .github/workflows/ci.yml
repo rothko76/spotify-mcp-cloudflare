@@ -71,6 +71,19 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 4ca884d36bb06d278ab040e40eba3b05
           environment: staging
+      - name: Liveness check
+        run: |
+          url=https://spotify-mcp-cloudflare-staging.rotemjac.workers.dev/
+          for i in 1 2 3 4 5; do
+            if curl -sf "$url" > /dev/null; then
+              echo "Staging is live"
+              exit 0
+            fi
+            echo "Attempt $i: staging not responding yet, retrying in 5s"
+            sleep 5
+          done
+          echo "Staging did not respond after deploy"
+          exit 1
 
   deploy:
     needs: [check, security, size]
@@ -93,3 +106,16 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 4ca884d36bb06d278ab040e40eba3b05
           environment: ""
+      - name: Liveness check
+        run: |
+          url=https://spotify-mcp-cloudflare.rotemjac.workers.dev/
+          for i in 1 2 3 4 5; do
+            if curl -sf "$url" > /dev/null; then
+              echo "Production is live"
+              exit 0
+            fi
+            echo "Attempt $i: production not responding yet, retrying in 5s"
+            sleep 5
+          done
+          echo "Production did not respond after deploy"
+          exit 1
